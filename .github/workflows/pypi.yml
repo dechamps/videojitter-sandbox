@@ -1,0 +1,28 @@
+on:
+  push
+  # release:
+  #  types: [released]
+jobs:
+  pypi:
+    runs-on: ubuntu-latest
+    environment:
+      name: PyPI
+      url: https://pypi.org/project/videojitter/
+    permissions:
+      id-token: write
+    steps:
+      - uses: dsaltares/fetch-gh-release-asset@1.1.1
+        with:
+          file: '.+\.(tar\.gz|whl)$'
+          target: ./ # https://github.com/dsaltares/fetch-gh-release-asset/issues/48
+          regex: true
+          #version: ${{ github.event.release.id }}
+          version: 130158988
+      - run: ls -la
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # TODO: switch to prod
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true
+          print-hash: true
+          packages-dir: .
